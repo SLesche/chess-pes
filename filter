@@ -1,0 +1,4 @@
+Event "Rated Blitz game"
+WhiteElo > 600
+BlackElo > 600
+AnalysisRequester "?"

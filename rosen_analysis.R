@@ -85,7 +85,7 @@ clean_move_data <- clean_move_data %>%
 
 clean_move_data <- clean_move_data %>% 
   mutate(
-    mistake = factor(ifelse(move_eval < -2, 1, 0))
+    mistake = factor(ifelse(corrected_move_eval < -2 & ((color == "black" & eval > 0) | (color == "white" & eval < 0)), 1, 0))
   ) %>% 
   group_by(game_id) %>% 
   mutate(
@@ -95,44 +95,51 @@ clean_move_data <- clean_move_data %>%
   mutate(prev_own_mistake = factor(lag(mistake))) %>% 
   ungroup() 
 
-clean_move_data <- clean_move_data %>% 
-  mutate(
-    abs_eval = abs(eval),
-  )
+clean_data <- clean_move_data %>% 
+  filter(!is.na(move_num), !is.na(eval), !is.na(clk_time)) 
 
-binned_summary <- clean_move_data %>% 
-  mutate(
-    move_num_quantile = move_num - (move_num %% 20) + 20,
-    cut_eval = cut(abs_eval, 50),
-    cut_own_move_eval = cut(prev_own_move_eval, 50),
-    cut_opp_move_eval = cut(prev_opp_move_eval, 50)
-  ) %>% 
-  group_by(
-    move_num_quantile,
-    cut_eval,
-    cut_own_move_eval,
-    cut_opp_move_eval,
-    color,
-  ) %>% 
-  summarize(
-    mean_move_time = mean(move_time, na.rm = TRUE),
-    n = n()
-  ) %>% 
+posterror_move_data <- clean_data %>% 
   filter(
-    n > 100
-  ) %>% 
-  na.omit()
-
-binned_summary <- binned_summary %>% 
-  mutate(
-    abs_eval = parse_number(as.character(cut_eval)),
-    prev_own_move_eval = parse_number(as.character(cut_own_move_eval)),
-    prev_opp_move_eval = parse_number(as.character(cut_opp_move_eval)),
+    prev_own_mistake == 1
   )
 
+library(MatchIt)
+
+# Example: match sampled_data to full_data by move_num and eval
+match_result <- matchit(group ~ move_num + eval + clk_time, 
+                        data = rbind(
+                          posterror_move_data %>% mutate(group = 1),
+                          clean_data %>% filter(
+                            prev_own_mistake != 1
+                          ) %>% mutate(group = 0)
+                        ),
+                        method = "nearest", 
+                        distance = "mahalanobis")
+
+matched_data <- match.data(match_result) %>%
+  filter(group == 0) # matched rows from full_data
 # Make sure that the correction for eval is correct. Should easiness of position 
 # also apply to the "worse" party?
 # Maybe add color as predictor
+
+full_data <- match.data(match_result)
+
+full_data %>% 
+  filter(move_time < 50, clk_time < 600) %>% 
+  ggplot(
+    aes(x = move_time, fill = factor(group), group = factor(group))
+  )+
+  geom_density(
+   alpha = 0.5 
+  )
+
+full_data %>% 
+  filter(move_time < 50) %>% 
+  group_by(group) %>% 
+  summarize(mean_move_time = mean(move_time, na.rm = TRUE))
+
+brms::brm(move_time ~ group, full_data %>% 
+            filter(move_time < 50, clk_time < 600))
 
 # Lets make some plots
 clean_move_data %>% 
