@@ -9,7 +9,7 @@ pgn_file <- "eval_games_21_06_blitz.pgn"
 # test <- read_pgn_moves(pgn_file, max.lines = 100000)
 
 con <- file(pgn_file, open = "r")
-games <- read_pgn_moves_stream(con, max.games = 20000)  # only first 1000 games
+games <- read_pgn_moves_stream(con, max.games = 50000)  # only first 1000 games
 close(con)
 
 data <- games %>% 
@@ -77,7 +77,8 @@ data <- data %>%
 
 data <- data %>% 
   filter(!is.na(move_num), !is.na(eval), !is.na(clock)) %>% 
-  filter(!abs(eval) > 10, !abs(prev_eval) > 10)
+  filter(!abs(eval) > 10, !abs(prev_eval) > 10) %>% 
+  filter(!clock > 18000)
 
 posterror_move_data <- data %>% 
   filter(
@@ -97,18 +98,36 @@ match_result <- matchit(group ~ move_num + prev_eval + clock + color,
 
 full_data <- match.data(match_result)
 
+full_data %>% 
+  ggplot(
+    aes(move_time, group = group, fill = group)
+  )+
+  geom_density(alpha = 0.5)
+
 rm(data)
 rm(posterror_move_data)
 rm(match_result)
+gc()
 
-t.test(move_time ~ group, full_data)
+t.test(move_time ~ group, 
+       full_data %>%
+         filter(!clock > 18000) %>% 
+         filter(move_time < 6000)
+       )
 
 pes_data <- full_data %>%
+  filter(!clock > 18000) %>% 
+  filter(move_time < 6000) %>% 
   pivot_wider(
     names_from = group,
     values_from = !subclass  
   ) %>% 
   mutate(pes = move_time_posterror - move_time_control)
+
+effectsize::cohens_d(
+  pes_data$move_time_control,
+  pes_data$move_time_posterror
+)
 
 pes_data %>%
   ggplot(
@@ -136,3 +155,7 @@ pes_data %>%
     )
   ) +
   geom_smooth(method = "loess", se = FALSE)
+
+hist(pes_data$pes)
+hist(pes_data$move_time_posterror)
+hist(pes_data$move_time_control)
