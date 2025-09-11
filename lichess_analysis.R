@@ -129,6 +129,20 @@ effectsize::cohens_d(
   pes_data$move_time_posterror
 )
 
+pes_data %>% 
+  group_by(move_num_posterror) %>% 
+  summarize(
+    mean_pes = mean(pes),
+    sd_pes = sd(pes)
+  ) %>% 
+  ggplot(
+    aes(
+      x = move_num_posterror,
+      y = mean_pes
+    )
+  )+
+  geom_point()
+
 pes_data %>%
   ggplot(
     aes(
