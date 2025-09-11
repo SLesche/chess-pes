@@ -4,3 +4,4 @@
 .Ruserdata
 pgn-extract.exe
 eval_games_21_06.pgn
+*.pgn
