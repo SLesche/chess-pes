@@ -8,7 +8,7 @@ pgn_file <- "eval_games_21_06_blitz.pgn"
 
 # test <- read_pgn_moves(pgn_file, max.lines = 100000
 con <- file(pgn_file, open = "r")
-games <- read_pgn_moves_stream(con, max.games = 500000)  # only first 1000 games
+games <- read_pgn_moves_stream(con, max.games = 100000)  # only first 1000 games
 close(con)
 
 data <- games %>% 
@@ -88,7 +88,10 @@ data <- data %>%
   filter(!abs(eval) > 10, !abs(prev_eval) > 10) %>% 
   filter(!clock > 18000) %>% 
   filter(move_time < 6000, move_time > 0) %>% 
-  mutate(group = ifelse(prev_own_mistake == 1, "posterror", "control"))
+  mutate(group = ifelse(prev_own_mistake == 1, "posterror", "control")) %>% 
+  mutate(clock_secs = clock / 100, opp_clock_secs = opp_clock / 100)
+
+saveRDS(data, file = "lichess_data/data_before_match.RDS")
 
 # 
 # posterror_move_data <- data %>% 
@@ -99,9 +102,9 @@ data <- data %>%
 # Example: match sampled_data to full_data by move_num and eval
 
 match_result <- matchit(
-  group ~ move_num + prev_eval + clock + color + prev_opp_move_eval +  opp_move_time + opp_clock, 
+  group ~ move_num + prev_eval + clock_secs + color + prev_opp_move_eval +  opp_move_time + opp_clock_secs, 
   data = data,
-  method = "quick",
+  method = "nearest",
   distance = "mahalanobis"
 )
 
