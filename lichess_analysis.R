@@ -12,6 +12,9 @@ full_data %>%
   geom_density(alpha = 0.5)
 
 t.test(log_move_time ~ prev_own_mistake, full_data)
+t.test(move_time ~ prev_own_mistake, full_data)
+
+t.test(corrected_move_eval ~ prev_own_mistake, full_data)
 
 pes_data <- full_data %>%
   pivot_wider(
@@ -30,51 +33,38 @@ effectsize::cohens_d(
   pes_data$move_time_posterror
 )
 
-pes_data %>% 
+eff_data <- pes_data %>% 
   mutate(
-    interaction = move_num_posterror
+    interaction = cut(eval_posterror, 50)
   ) %>% 
-  group_by(interaction) %>% 
+  filter(move_num_posterror < 90) %>% 
+  group_by(interaction, mistake_in_losing_position_posterror, sign_flipped_posterror) %>% 
+  # group_by(interaction) %>% 
   summarize(
     mean_pes = mean(pes),
-    sd_pes = sd(pes)
+    sd_pes = sd(pes),
+    effsize= effectsize::cohens_d(
+      move_time_control,
+      move_time_posterror
+    )
   ) %>% 
+  janitor::clean_names()
+
+colnames(eff_data) <- c("interaction", "mistake_in_losing_position_posterror", "sign_flipped_posterror", "mean_pes", "sd_pes", "cohen_d")
+# colnames(eff_data) <- c("interaction", "mean_pes", "sd_pes", "cohen_d", "ci", "ci_low", "ci_high")
+
+eff_data %>% 
   ggplot(
     aes(
       x = interaction,
-      y = mean_pes
+      y = cohen_d$Cohens_d,
+      # y = mean_pes
     )
   )+
   geom_point()+
-  geom_smooth()
+  geom_smooth()+
+  facet_wrap(~interaction(mistake_in_losing_position_posterror, sign_flipped_posterror))+
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed")
 
-pes_data %>%
-  ggplot(
-    aes(
-      x = move_num_posterror,
-      y = pes
-    )
-  ) +
-  geom_smooth(method = "loess", se = FALSE)
+eff_data %>% View()
 
-pes_data %>%
-  ggplot(
-    aes(
-      x = player_moving_elo_posterror,
-      y = pes
-    )
-  ) +
-  geom_smooth(method = "loess", se = FALSE)
-
-pes_data %>%
-  ggplot(
-    aes(
-      x = clock_posterror,
-      y = pes
-    )
-  ) +
-  geom_smooth(method = "loess", se = FALSE)
-
-hist(pes_data$pes)
-hist(pes_data$move_time_posterror)
-hist(pes_data$move_time_control)
