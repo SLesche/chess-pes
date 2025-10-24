@@ -59,6 +59,7 @@ data <- data %>%
   group_by(id, color) %>% 
   mutate(
     prev_own_move_eval = lag(corrected_move_eval),
+    prev_own_move_time = lag(move_time)
   ) %>% 
   group_by(id) %>% 
   mutate(
@@ -107,6 +108,7 @@ data <- data %>%
     opp_move_time_secs = opp_move_time / 100,
     opp_move_time_secs_dec = round(opp_move_time / 100, -1),
     move_time_secs = move_time / 100,
+    prev_move_time_secs = prev_own_move_time / 100,
   )
 
 saveRDS(data, file = "lichess_data/data_before_match_350k_blitz.RDS")
