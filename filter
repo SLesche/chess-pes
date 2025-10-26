@@ -1,5 +1,5 @@
-Event "Rated Blitz game"
+Event "Rated Classical game"
 WhiteElo > 600
 BlackElo > 600
 AnalysisRequester "?"
-TimeControl "180+0"
+TimeControl "3600+0"

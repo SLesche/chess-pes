@@ -34,11 +34,15 @@ effectsize::cohens_d(
   pes_data$move_time_posterror
 )
 
+effectsize::cohens_d(
+  pes_data$corrected_move_eval_control,
+  pes_data$corrected_move_eval_posterror
+)
+
 eff_data <- pes_data %>% 
   mutate(
     interaction = prev_own_move_time_posterror
   ) %>% 
-  filter(prev_own_move_time_posterror < 1000) %>% 
   group_by(interaction, mistake_made_in_losing_position_posterror, mistake_flipped_sign_posterror) %>% 
   # group_by(interaction) %>% 
   summarize(

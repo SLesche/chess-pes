@@ -1,1 +1,3 @@
 pgn-extract D:\data\chess-pes\lichess_db_univ_2021-06.pgn\lichess_db_univ_2021-06.pgn -o eval_games.pgn -t filter --minmoves 10 --stopafter 1000
+
+pgn-extract eval_games_21_06.pgn -o eval_games_21_06_bullet.pgn -t filter --minmoves 10 --stopafter 1000
