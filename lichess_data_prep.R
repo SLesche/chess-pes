@@ -95,8 +95,8 @@ data <- data %>%
   ungroup() %>% 
   filter(!is.na(move_num), !is.na(eval), !is.na(clock), !is.na(opp_move_time)) %>% 
   filter(!abs(eval) > 10, !abs(prev_eval) > 10) %>% 
-  filter(!clock > 18000) %>% 
-  filter(move_time < 6000, move_time > 0) %>% 
+  # filter(!clock > 18000) %>% 
+  filter(move_time > 0) %>%
   mutate(group = ifelse(prev_own_mistake == 1, "posterror", "control")) %>% 
   mutate(clock_secs = clock / 100, opp_clock_secs = opp_clock / 100) %>% 
   mutate(
