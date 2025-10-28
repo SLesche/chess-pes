@@ -1,13 +1,13 @@
 library(tidyverse)
 library(data.table)
 
-full_data <- readRDS("lichess_data/full_data_350k_blitz.RDS")
+full_data <- readRDS("lichess_data/full_data_350k_blitz_elo.RDS")
 
 full_data$log_move_time <- log(full_data$move_time)
 
 full_data %>% 
   ggplot(
-    aes(log_move_time, group = group, fill = group)
+    aes(opponent_elo, group = group, fill = group)
   )+
   geom_density(alpha = 0.5)
 
