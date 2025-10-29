@@ -4,7 +4,7 @@ library(MatchIt)
 
 source("read_pgn_moves.R")
 # Replace with your PGN file path
-pgn_file <- "eval_games_21_06_blitz.pgn"
+pgn_file <- "eval_games_21_06_classical.pgn"
 
 # test <- read_pgn_moves(pgn_file, max.lines = 100000
 con <- file(pgn_file, open = "r")
@@ -109,9 +109,10 @@ data <- data %>%
     opp_move_time_secs_dec = round(opp_move_time / 100, -1),
     move_time_secs = move_time / 100,
     prev_move_time_secs = prev_own_move_time / 100,
+    player_moving_elo_hun = round(player_moving_elo, -2)
   )
 
-saveRDS(data, file = "lichess_data/data_before_match_350k_blitz.RDS")
+saveRDS(data, file = "lichess_data/data_before_match_350k_classical.RDS")
 
 # 
 # posterror_move_data <- data %>% 
@@ -136,7 +137,8 @@ batch_ids <- split(data,
                      data$move_num_dec,
                      # data$prev_eval_one,
                      # data$prev_opp_move_eval_one
-                     data$clock_secs_dec
+                     data$clock_secs_dec,
+                     data$player_moving_elo_hun
                      # data$opp_clock_secs_dec,
                      # data$opp_move_time_secs_dec
                      )
@@ -157,7 +159,8 @@ clusterExport(cl, varlist = c("batch_ids"))
 # Run MatchIt in parallel safely on Windows
 results <- parLapply(cl, batch_ids, function(df) {
   matchit(group ~ move_num + prev_eval + clock_secs +
-            prev_opp_move_eval + opp_move_time + opp_clock_secs,
+            prev_opp_move_eval + opp_move_time + opp_clock_secs + 
+            player_moving_elo + opponent_elo,
           data = df,
           method = "nearest",
           distance = "mahalanobis")
@@ -183,6 +186,6 @@ rm(matched_dfs)
 gc()
 
 # saveRDS(match_result, file = "lichess_data/match_result.RDS")
-saveRDS(full_data, file = "lichess_data/full_data_350k_blitz.RDS")
+saveRDS(full_data, file = "lichess_data/full_data_350k_classical.RDS")
 rm(full_data)
 gc()
