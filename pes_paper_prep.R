@@ -31,6 +31,64 @@ rapid_sd_response_acc <- sd(data_before_match$corrected_move_eval)
 rapid_perc_errors <- mean(data_before_match$mistake == 1)
 rapid_num_moves <- nrow(data_before_match)
 
+data_before_match <- readRDS("lichess_data/data_before_match_350k_classical.RDS")
+
+classical_avg_response_speed <- mean(data_before_match$move_time_secs)
+classical_sd_response_speed <- sd(data_before_match$move_time_secs)
+classical_median_response_speed <- median(data_before_match$move_time_secs)
+classical_avg_response_acc <- mean(data_before_match$corrected_move_eval)
+classical_sd_response_acc <- sd(data_before_match$corrected_move_eval)
+classical_perc_errors <- mean(data_before_match$mistake == 1)
+classical_num_moves <- nrow(data_before_match)
+
+
+result_overview <- data.frame(
+  time_format = c("bullet", "blitz", "rapid", "classical"),
+  avg_speed = c(
+    bullet_avg_response_speed,
+    blitz_avg_response_speed,
+    rapid_avg_response_speed,
+    classical_avg_response_speed
+  ),
+  sd_speed = c(
+    bullet_sd_response_speed,
+    blitz_sd_response_speed,
+    rapid_sd_response_speed,
+    classical_sd_response_speed
+  ),
+  median_speed = c(
+    bullet_median_response_speed,
+    blitz_median_response_speed,
+    rapid_median_response_speed,
+    classical_median_response_speed
+  ),
+  avg_acc = c(
+    bullet_avg_response_acc,
+    blitz_avg_response_acc,
+    rapid_avg_response_acc,
+    classical_avg_response_acc
+  ),
+  sd_acc = c(
+    bullet_sd_response_acc,
+    blitz_sd_response_acc,
+    rapid_sd_response_acc,
+    classical_sd_response_acc
+  ),
+  perc_errors = c(
+    bullet_perc_errors,
+    blitz_perc_errors,
+    rapid_perc_errors,
+    classical_perc_errors
+  ),
+  num_moves = c(
+    bullet_num_moves,
+    blitz_num_moves,
+    rapid_num_moves,
+    classical_num_moves
+  )
+)
+
+write.csv(result_overview, file = "lichess_data/overview_table.csv")
 # data_before_match <- readRDS("lichess_data/data_before_match_350k_classical.RDS")
 # 
 # classical_avg_response_speed <- mean(data_before_match$move_time_secs)
@@ -80,27 +138,27 @@ pes_data_rapid <- full_data_rapid %>%
 
 rm(full_data_rapid)
 
+full_data_classical <- readRDS("lichess_data/full_data_350k_classical.RDS")
+
+pes_data_classical <- full_data_classical %>%
+  mutate(subclass = paste0(subclass, ".", batch)) %>% 
+  pivot_wider(
+    names_from = group,
+    values_from = !subclass  
+  ) %>% 
+  mutate(pes = move_time_posterror - move_time_control,
+         pea = corrected_move_eval_posterror - corrected_move_eval_control)
+
+rm(full_data_classical)
+
 
 pes_data <- rbind(
   pes_data_bullet %>% mutate(time_format = "bullet"),
   pes_data_blitz %>% mutate(time_format = "blitz"),
-  pes_data_rapid %>% mutate(time_format = "rapid")
+  pes_data_rapid %>% mutate(time_format = "rapid"),
+  pes_data_classical %>% mutate(time_format = "classical")
 )
 
-rm(pes_data_bullet, pes_data_blitz, pes_data_rapid)
+rm(pes_data_bullet, pes_data_blitz, pes_data_rapid, pes_data_classical)
 
-# Moderators: 
-# Opp move time (opp_move_time_posterror)
-# Remaining time on player click (clock_secs_posterror)
-# Severity of the error (prev_own_move_eval_posterror)
-# Speed of the error (prev_own_move_time_posterror)
-# Elo rating (player_moving_elo_posterror)
-
-source("helper_functions.R")
-plot_moderator_analysis(pes_data %>% filter(time_format == "bullet"), player_moving_elo_posterror)
-plot_moderator_analysis(pes_data %>% filter(time_format == "blitz"), player_moving_elo_posterror)
-plot_moderator_analysis(pes_data %>% filter(time_format == "rapid"), player_moving_elo_posterror)
-
-# plot_moderator_grouped(pes_data, player_moving_elo_posterror)
-
-# this is shit. Make them separate
+saveRDS(pes_data, file = "lichess_data/pes_data_full.RDS")
