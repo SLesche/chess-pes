@@ -47,8 +47,8 @@ plot_moderator_analysis <- function(data, moderator_var, x_label = NULL, include
   
   # find actual moderator values at every 10th quantile
   quantile_labels <- data %>%
-    summarize(q = quantile(!!mod_quo, probs = seq(0.05, 0.95, 0.1), na.rm = TRUE)) %>%
-    pull(q)
+    summarize(q = quantile(!!mod_quo, probs = seq(0.05, 0.95, 0.15), na.rm = TRUE)) %>%
+    pull(q) 
   
   if (include_error_types){
     ggplot(eff_data, aes(x = moderator, y = mean_pes, group = sign_flipped_posterror, color = sign_flipped_posterror)) +
@@ -74,13 +74,18 @@ plot_moderator_analysis <- function(data, moderator_var, x_label = NULL, include
       )+
       geom_smooth(se = FALSE) +
       scale_x_continuous(
-        breaks = seq(5, 95, by = 10),
-        labels = round(quantile_labels, 2)
+        breaks = seq(5, 95, by = 15),
+        labels = round(quantile_labels, 1)
       ) +
       theme_classic() +
       labs(
         y = "PES",
         x = ifelse(is.null(x_label), glue::glue("{mod_name} (quantile bins → actual values on axis)"), x_label)
+      )+
+      theme(
+        text = element_text(size = 25),            # base text size
+        axis.title = element_text(size = 25),      # axis titles
+        axis.text = element_text(size = 20),       # axis labels
       )
   }
 }

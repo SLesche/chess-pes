@@ -55,7 +55,7 @@ source("helper_functions.R")
 ### Opp Move time -----
 # Extract each panel as its own ggplot
 plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, opp_move_time_secs_posterror)
+  plot_moderator_analysis(subdf, opp_move_time_secs_posterror, "RSI (in s)")
 })
 
 # Combine and label with A–D
@@ -75,9 +75,9 @@ ggplot2::ggsave(
   dpi = 300         # high-quality resolution for publication
 )
 
-### Time pressure -----
+€### Time pressure -----
 plots_time_pressure <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, clock_secs_posterror)
+  plot_moderator_analysis(subdf, clock_secs_posterror, "Time Remaining (in s)")
 })
 
 # Combine and label with A–D
@@ -99,7 +99,7 @@ ggplot2::ggsave(
 
 ### Error severity -----
 plots_error_severity <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, prev_own_move_eval_posterror)
+  plot_moderator_analysis(subdf, prev_own_move_eval_posterror, "Error Severity")
 })
 
 # Combine and label with A–D
@@ -120,8 +120,10 @@ ggplot2::ggsave(
 )
 
 ### Error speed -----
+pes_data$prev_own_move_time_secs_posterror = pes_data$prev_own_move_time_posterror / 100
+
 plots_error_speed <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, prev_own_move_time_posterror)
+  plot_moderator_analysis(subdf, prev_own_move_time_secs_posterror, "Error Move Time (in s)")
 })
 
 # Combine and label with A–D
@@ -143,7 +145,7 @@ ggplot2::ggsave(
 
 ### Player ability -----
 plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, player_moving_elo_posterror)
+  plot_moderator_analysis(subdf, player_moving_elo_posterror, "Player Rating (in elo)")
 })
 
 # Combine and label with A–D
@@ -162,3 +164,4 @@ ggplot2::ggsave(
   height = 9,       # adjust height as needed
   dpi = 300         # high-quality resolution for publication
 )
+
