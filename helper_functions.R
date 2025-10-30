@@ -63,7 +63,7 @@ plot_moderator_analysis <- function(data, moderator_var, x_label = NULL, include
       ) +
       theme_classic() +
       labs(
-        y = "PES",
+        y = "PES (in ms)",
         x = ifelse(is.null(x_label), glue::glue("{mod_name} (quantile bins → actual values on axis)"), x_label)
       )
   } else {
@@ -79,7 +79,7 @@ plot_moderator_analysis <- function(data, moderator_var, x_label = NULL, include
       ) +
       theme_classic() +
       labs(
-        y = "PES",
+        y = "PES (in ms)",
         x = ifelse(is.null(x_label), glue::glue("{mod_name} (quantile bins → actual values on axis)"), x_label)
       )+
       theme(
@@ -174,7 +174,7 @@ plot_moderator_grouped <- function(data, moderator_var){
     # ) +
     theme_classic() +
     labs(
-      y = "PES",
+      y = "PES (in ms)",
       x = glue::glue("{mod_name}")
     )
 }

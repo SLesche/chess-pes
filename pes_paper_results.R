@@ -56,6 +56,29 @@ write.csv(overview_table, file = "results/overview_table.csv")
 # Elo rating (player_moving_elo_posterror)
 
 source("helper_functions.R")
+pes_data$pes <- pes_data$pes * 10
+
+### PEA by PES -----
+plots_pes_pea <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
+  plot_moderator_analysis_pea(subdf, pes, "PES (in ms)")
+})
+
+# Combine and label with A–D
+combined_pes_pea <- cowplot::plot_grid(
+  plots_pes_pea[[1]], plots_pes_pea[[2]], plots_pes_pea[[3]], plots_pes_pea[[4]],
+  labels = c("A", "B", "C", "D"),
+  label_size = 30,
+  ncol = 2
+)
+
+ggplot2::ggsave(
+  filename = "imgs/pes_pea_relationship.jpg",
+  plot = combined_pes_pea,
+  width = 16,       # adjust width as needed
+  height = 9,       # adjust height as needed
+  dpi = 300         # high-quality resolution for publication
+)
+
 # plot_moderator_analysis(pes_data %>% filter(time_format == "bullet"), opp_move_time_secs_posterror)
 # plot_moderator_analysis(pes_data %>% filter(time_format == "blitz"), opp_move_time_secs_posterror)
 # plot_moderator_analysis(pes_data %>% filter(time_format == "rapid"), opp_move_time_secs_posterror)
