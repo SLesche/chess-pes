@@ -10,19 +10,28 @@ pes_overview <- pes_data %>%
   ) %>% 
   summarize(
     mean_pes_secs = mean(pes) / 100,
+    sd_pes_secs = sd(pes/100),
+    mean_pea = mean(pea),
     mean_time_control = mean(move_time_secs_control, na.rm = TRUE),
+    sd_time_control = sd(move_time_secs_control),
     mean_time_posterror = mean(move_time_secs_posterror, na.rm = TRUE),
+    sd_time_posterror = sd(move_time_secs_posterror),
     mean_acc_control = mean(corrected_move_eval_control, na.rm = TRUE),
+    sd_acc_control = sd(corrected_move_eval_control),
     mean_acc_posterror = mean(corrected_move_eval_posterror, na.rm = TRUE),
+    sd_acc_posterror = sd(corrected_move_eval_posterror, na.rm = TRUE),
     t_test_pes_t = t.test(move_time_posterror, move_time_control)$statistic,
     t_test_pes_p = t.test(move_time_posterror, move_time_control)$p.value,
-    t_test_pes_bf = BayesFactor::ttestBF(move_time_posterror, move_time_control)@bayesFactor$bf,
+    t_test_pes_df = t.test(move_time_posterror, move_time_control)$parameter,
+    # t_test_pes_bf = BayesFactor::ttestBF(move_time_posterror, move_time_control)@bayesFactor$bf,
     t_test_log_t = t.test(log(move_time_posterror), log(move_time_control))$statistic,
     t_test_log_p = t.test(log(move_time_posterror), log(move_time_control))$p.value,
-    t_test_log_bf = BayesFactor::ttestBF(log(move_time_posterror), log(move_time_control))@bayesFactor$bf,
+    t_test_log_df = t.test(log(move_time_posterror), log(move_time_control))$parameter,
+    # t_test_log_bf = BayesFactor::ttestBF(log(move_time_posterror), log(move_time_control))@bayesFactor$bf,
     t_test_pea_t = t.test(corrected_move_eval_posterror, corrected_move_eval_control)$statistic,
     t_test_pea_p = t.test(corrected_move_eval_posterror, corrected_move_eval_control)$p.value,
-    t_test_pea_bf = BayesFactor::ttestBF(corrected_move_eval_posterror, corrected_move_eval_control)@bayesFactor$bf,
+    t_test_pea_df = t.test(corrected_move_eval_posterror, corrected_move_eval_control)$parameter,
+    # t_test_pea_bf = BayesFactor::ttestBF(corrected_move_eval_posterror, corrected_move_eval_control)@bayesFactor$bf,
     d_pes = effectsize::cohens_d(move_time_posterror, move_time_control)$Cohens_d,
     d_pes_low = effectsize::cohens_d(move_time_posterror, move_time_control)$CI_low,
     d_pes_high = effectsize::cohens_d(move_time_posterror, move_time_control)$CI_high,
@@ -62,7 +71,7 @@ plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = 
 combined_move_time <- cowplot::plot_grid(
   plots_move_time[[1]], plots_move_time[[2]], plots_move_time[[3]], plots_move_time[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -84,7 +93,7 @@ plots_time_pressure <- lapply(split(pes_data, factor(pes_data$time_format, level
 combined_time_pressure <- cowplot::plot_grid(
   plots_time_pressure[[1]], plots_time_pressure[[2]], plots_time_pressure[[3]], plots_time_pressure[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -106,7 +115,7 @@ plots_error_severity <- lapply(split(pes_data, factor(pes_data$time_format, leve
 combined_error_severity <- cowplot::plot_grid(
   plots_error_severity[[1]], plots_error_severity[[2]], plots_error_severity[[3]], plots_error_severity[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -130,7 +139,7 @@ plots_error_speed <- lapply(split(pes_data, factor(pes_data$time_format, levels 
 combined_error_speed <- cowplot::plot_grid(
   plots_error_speed[[1]], plots_error_speed[[2]], plots_error_speed[[3]], plots_error_speed[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -152,7 +161,7 @@ plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, leve
 combined_player_ability <- cowplot::plot_grid(
   plots_player_ability[[1]], plots_player_ability[[2]], plots_player_ability[[3]], plots_player_ability[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -177,7 +186,7 @@ plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = 
 combined_move_time <- cowplot::plot_grid(
   plots_move_time[[1]], plots_move_time[[2]], plots_move_time[[3]], plots_move_time[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -199,7 +208,7 @@ plots_time_pressure <- lapply(split(pes_data, factor(pes_data$time_format, level
 combined_time_pressure <- cowplot::plot_grid(
   plots_time_pressure[[1]], plots_time_pressure[[2]], plots_time_pressure[[3]], plots_time_pressure[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -221,7 +230,7 @@ plots_error_severity <- lapply(split(pes_data, factor(pes_data$time_format, leve
 combined_error_severity <- cowplot::plot_grid(
   plots_error_severity[[1]], plots_error_severity[[2]], plots_error_severity[[3]], plots_error_severity[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -245,7 +254,7 @@ plots_error_speed <- lapply(split(pes_data, factor(pes_data$time_format, levels 
 combined_error_speed <- cowplot::plot_grid(
   plots_error_speed[[1]], plots_error_speed[[2]], plots_error_speed[[3]], plots_error_speed[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
@@ -267,7 +276,7 @@ plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, leve
 combined_player_ability <- cowplot::plot_grid(
   plots_player_ability[[1]], plots_player_ability[[2]], plots_player_ability[[3]], plots_player_ability[[4]],
   labels = c("A", "B", "C", "D"),
-  label_size = 18,
+  label_size = 30,
   ncol = 2
 )
 
