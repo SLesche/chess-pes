@@ -104,3 +104,26 @@ ggplot(eff_data, aes(x = moderator, y = mean_pea)) +
     axis.text = element_text(size = 20),       # axis labels
   )
 
+plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
+  plot_moderator_analysis(subdf, prev_eval_posterror, "Position Evaluation")
+})
+
+# Combine and label with A–D
+combined_move_time <- cowplot::plot_grid(
+  plots_move_time[[1]], plots_move_time[[2]], plots_move_time[[3]], plots_move_time[[4]],
+  labels = c("A", "B", "C", "D"),
+  label_size = 30,
+  ncol = 2
+)
+
+plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
+  plot_moderator_analysis_pea(subdf, prev_eval_posterror, "Position Evaluation")
+})
+
+# Combine and label with A–D
+combined_move_time <- cowplot::plot_grid(
+  plots_move_time[[1]], plots_move_time[[2]], plots_move_time[[3]], plots_move_time[[4]],
+  labels = c("A", "B", "C", "D"),
+  label_size = 30,
+  ncol = 2
+)
