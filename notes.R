@@ -127,3 +127,23 @@ combined_move_time <- cowplot::plot_grid(
   label_size = 30,
   ncol = 2
 )
+
+
+## Testing only severe ----
+testing <- pes_data %>% 
+  filter(
+    prev_own_move_eval_posterror < -5,
+    player_moving_elo_posterror > 1800
+  )
+
+plots <- lapply(split(testing, factor(testing$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
+  plot_moderator_analysis(subdf, opp_move_time_secs_posterror, "Position Evaluation")
+})
+
+# Combine and label with A–D
+combined_plots <- cowplot::plot_grid(
+  plots[[1]], plots[[2]], plots[[3]], plots[[4]],
+  labels = c("A", "B", "C", "D"),
+  label_size = 30,
+  ncol = 2
+)
