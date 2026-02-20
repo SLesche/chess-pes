@@ -60,7 +60,14 @@ pes_data$pes <- pes_data$pes * 10
 
 ### PEA by PES -----
 plots_pes_pea <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis_pea(subdf, pes, "PES (in ms)")
+  plot_moderator_analysis(
+    subdf, 
+    pes,
+    pea,
+    "PES (in ms)",
+    "PEA (in evaluation)",
+    y_limits = c(-1, 1)
+    )
 })
 
 # Combine and label with A–D
@@ -79,6 +86,7 @@ ggplot2::ggsave(
   dpi = 300         # high-quality resolution for publication
 )
 
+
 # plot_moderator_analysis(pes_data %>% filter(time_format == "bullet"), opp_move_time_secs_posterror)
 # plot_moderator_analysis(pes_data %>% filter(time_format == "blitz"), opp_move_time_secs_posterror)
 # plot_moderator_analysis(pes_data %>% filter(time_format == "rapid"), opp_move_time_secs_posterror)
@@ -87,7 +95,14 @@ ggplot2::ggsave(
 ### Opp Move time -----
 # Extract each panel as its own ggplot
 plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, opp_move_time_secs_posterror, "RSI (in s)")
+  plot_moderator_analysis(
+    subdf,
+    opp_move_time_secs_posterror,
+    pes,
+    "RSI (in s)",
+    "PES (in ms)",
+    y_limits = c(quantile(subdf$pes, 0.45), quantile(subdf$pes, 0.65))
+  )
 })
 
 # Combine and label with A–D
@@ -106,32 +121,46 @@ ggplot2::ggsave(
   height = 9,       # adjust height as needed
   dpi = 300         # high-quality resolution for publication
 )
-
-### Time pressure -----
-plots_time_pressure <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, clock_secs_posterror, "Time Remaining (in s)")
-})
-
-# Combine and label with A–D
-combined_time_pressure <- cowplot::plot_grid(
-  plots_time_pressure[[1]], plots_time_pressure[[2]], plots_time_pressure[[3]], plots_time_pressure[[4]],
-  labels = c("A", "B", "C", "D"),
-  label_size = 30,
-  ncol = 2
-)
-
-# Save the combined plot
-ggplot2::ggsave(
-  filename = "imgs/time_pressure_moderator.jpg",
-  plot = combined_time_pressure,
-  width = 16,       # adjust width as needed
-  height = 9,       # adjust height as needed
-  dpi = 300         # high-quality resolution for publication
-)
+ 
+# ### Time pressure -----
+# plots_time_pressure <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
+#   plot_moderator_analysis(
+#     subdf,
+#     clock_secs_posterror,
+#     pes,
+#     "Time Pressure",
+#     "PES (in ms)",
+#     y_limits = c(0, 50)
+#   )
+# })
+# 
+# # Combine and label with A–D
+# combined_time_pressure <- cowplot::plot_grid(
+#   plots_time_pressure[[1]], plots_time_pressure[[2]], plots_time_pressure[[3]], plots_time_pressure[[4]],
+#   labels = c("A", "B", "C", "D"),
+#   label_size = 30,
+#   ncol = 2
+# )
+# 
+# # Save the combined plot
+# ggplot2::ggsave(
+#   filename = "imgs/time_pressure_moderator.jpg",
+#   plot = combined_time_pressure,
+#   width = 16,       # adjust width as needed
+#   height = 9,       # adjust height as needed
+#   dpi = 300         # high-quality resolution for publication
+# )
 
 ### Error severity -----
 plots_error_severity <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, prev_own_move_eval_posterror, "Error Severity")
+  plot_moderator_analysis(
+    subdf,
+    prev_own_move_eval_posterror,
+    pes,
+    "Error Severity",
+    "PES (in ms)",
+    y_limits = c(quantile(subdf$pes, 0.45), quantile(subdf$pes, 0.65))
+  )
 })
 
 # Combine and label with A–D
@@ -151,33 +180,47 @@ ggplot2::ggsave(
   dpi = 300         # high-quality resolution for publication
 )
 
-### Error speed -----
-pes_data$prev_own_move_time_secs_posterror = pes_data$prev_own_move_time_posterror / 100
-
-plots_error_speed <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, prev_own_move_time_secs_posterror, "Error Move Time (in s)")
-})
-
-# Combine and label with A–D
-combined_error_speed <- cowplot::plot_grid(
-  plots_error_speed[[1]], plots_error_speed[[2]], plots_error_speed[[3]], plots_error_speed[[4]],
-  labels = c("A", "B", "C", "D"),
-  label_size = 30,
-  ncol = 2
-)
-
-# Save the combined plot
-ggplot2::ggsave(
-  filename = "imgs/error_speed_moderator.jpg",
-  plot = combined_error_speed,
-  width = 16,       # adjust width as needed
-  height = 9,       # adjust height as needed
-  dpi = 300         # high-quality resolution for publication
-)
+# ### Error speed -----
+# pes_data$prev_own_move_time_secs_posterror = pes_data$prev_own_move_time_posterror / 100
+# 
+# plots_error_speed <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
+#   plot_moderator_analysis(
+#     subdf,
+#     prev_own_move_time_secs_posterror,
+#     pes,
+#     "Error Move Time (in s)",
+#     "PES (in ms)",
+#     y_limits = c(0, quantile(subdf$pes, 0.95))
+#     )
+# })
+# 
+# # Combine and label with A–D
+# combined_error_speed <- cowplot::plot_grid(
+#   plots_error_speed[[1]], plots_error_speed[[2]], plots_error_speed[[3]], plots_error_speed[[4]],
+#   labels = c("A", "B", "C", "D"),
+#   label_size = 30,
+#   ncol = 2
+# )
+# 
+# # Save the combined plot
+# ggplot2::ggsave(
+#   filename = "imgs/error_speed_moderator.jpg",
+#   plot = combined_error_speed,
+#   width = 16,       # adjust width as needed
+#   height = 9,       # adjust height as needed
+#   dpi = 300         # high-quality resolution for publication
+# )
 
 ### Player ability -----
 plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis(subdf, player_moving_elo_posterror, "Player Rating (in elo)")
+  plot_moderator_analysis(
+    subdf, 
+    player_moving_elo_posterror, 
+    pes,
+    "Player Rating (in elo)",
+    "PES (in ms)",
+    y_limits = c(quantile(subdf$pes, 0.45), quantile(subdf$pes, 0.65))
+  )
 })
 
 # Combine and label with A–D
@@ -197,12 +240,18 @@ ggplot2::ggsave(
   dpi = 300         # high-quality resolution for publication
 )
 
-
 ### PEA -----
 ### Opp Move time -----
 # Extract each panel as its own ggplot
 plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis_pea(subdf, opp_move_time_secs_posterror, "RSI (in s)")
+  plot_moderator_analysis(
+    subdf, 
+    opp_move_time_secs_posterror, 
+    pea,
+    "RSI (in s)",
+    "PEA (in evaluation",
+    y_limits = c(-1, 1)
+    )
 })
 
 # Combine and label with A–D
@@ -222,31 +271,45 @@ ggplot2::ggsave(
   dpi = 300         # high-quality resolution for publication
 )
 
-### Time pressure -----
-plots_time_pressure <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis_pea(subdf, clock_secs_posterror, "Time Remaining (in s)")
-})
-
-# Combine and label with A–D
-combined_time_pressure <- cowplot::plot_grid(
-  plots_time_pressure[[1]], plots_time_pressure[[2]], plots_time_pressure[[3]], plots_time_pressure[[4]],
-  labels = c("A", "B", "C", "D"),
-  label_size = 30,
-  ncol = 2
-)
-
-# Save the combined plot
-ggplot2::ggsave(
-  filename = "imgs/time_pressure_moderator_pea.jpg",
-  plot = combined_time_pressure,
-  width = 16,       # adjust width as needed
-  height = 9,       # adjust height as needed
-  dpi = 300         # high-quality resolution for publication
-)
+# ### Time pressure -----
+# plots_time_pressure <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
+#   plot_moderator_analysis(
+#     subdf, 
+#     clock_secs_posterror, 
+#     pea, 
+#     "Time Remaining (in s)",
+#     "PEA (in evaluation)",
+#     y_limits = c(-1, 1)
+#     )
+# })
+# 
+# # Combine and label with A–D
+# combined_time_pressure <- cowplot::plot_grid(
+#   plots_time_pressure[[1]], plots_time_pressure[[2]], plots_time_pressure[[3]], plots_time_pressure[[4]],
+#   labels = c("A", "B", "C", "D"),
+#   label_size = 30,
+#   ncol = 2
+# )
+# 
+# # Save the combined plot
+# ggplot2::ggsave(
+#   filename = "imgs/time_pressure_moderator_pea.jpg",
+#   plot = combined_time_pressure,
+#   width = 16,       # adjust width as needed
+#   height = 9,       # adjust height as needed
+#   dpi = 300         # high-quality resolution for publication
+# )
 
 ### Error severity -----
 plots_error_severity <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis_pea(subdf, prev_own_move_eval_posterror, "Error Severity")
+  plot_moderator_analysis(
+    subdf, 
+    prev_own_move_eval_posterror,
+    pea,
+    "Error Severity",
+    "PEA (in evaluation)",
+    y_limits = c(-1, 1)
+    )
 })
 
 # Combine and label with A–D
@@ -266,33 +329,40 @@ ggplot2::ggsave(
   dpi = 300         # high-quality resolution for publication
 )
 
-### Error speed -----
-pes_data$prev_own_move_time_secs_posterror = pes_data$prev_own_move_time_posterror / 100
-
-plots_error_speed <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis_pea(subdf, prev_own_move_time_secs_posterror, "Error Move Time (in s)")
-})
-
-# Combine and label with A–D
-combined_error_speed <- cowplot::plot_grid(
-  plots_error_speed[[1]], plots_error_speed[[2]], plots_error_speed[[3]], plots_error_speed[[4]],
-  labels = c("A", "B", "C", "D"),
-  label_size = 30,
-  ncol = 2
-)
-
-# Save the combined plot
-ggplot2::ggsave(
-  filename = "imgs/error_speed_moderator_pea.jpg",
-  plot = combined_error_speed,
-  width = 16,       # adjust width as needed
-  height = 9,       # adjust height as needed
-  dpi = 300         # high-quality resolution for publication
-)
+# ### Error speed -----
+# pes_data$prev_own_move_time_secs_posterror = pes_data$prev_own_move_time_posterror / 100
+# 
+# plots_error_speed <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
+#   plot_moderator_analysis_pea(subdf, prev_own_move_time_secs_posterror, "Error Move Time (in s)")
+# })
+# 
+# # Combine and label with A–D
+# combined_error_speed <- cowplot::plot_grid(
+#   plots_error_speed[[1]], plots_error_speed[[2]], plots_error_speed[[3]], plots_error_speed[[4]],
+#   labels = c("A", "B", "C", "D"),
+#   label_size = 30,
+#   ncol = 2
+# )
+# 
+# # Save the combined plot
+# ggplot2::ggsave(
+#   filename = "imgs/error_speed_moderator_pea.jpg",
+#   plot = combined_error_speed,
+#   width = 16,       # adjust width as needed
+#   height = 9,       # adjust height as needed
+#   dpi = 300         # high-quality resolution for publication
+# )
 
 ### Player ability -----
 plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
-  plot_moderator_analysis_pea(subdf, player_moving_elo_posterror, "Player Rating (in elo)")
+  plot_moderator_analysis(
+    subdf, 
+    player_moving_elo_posterror,
+    pea,
+    "Player Rating (in elo)",
+    "PEA (in evaluation)",
+    y_limits = c(-1, 1)
+    )
 })
 
 # Combine and label with A–D
