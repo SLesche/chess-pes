@@ -65,7 +65,7 @@ plots_pes_pea <- lapply(split(pes_data, factor(pes_data$time_format, levels = c(
     pes,
     pea,
     "PES (in ms)",
-    "PEA (in evaluation)",
+    labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
     )
 })
@@ -249,7 +249,7 @@ plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = 
     opp_move_time_secs_posterror, 
     pea,
     "RSI (in s)",
-    "PEA (in evaluation",
+    labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
     )
 })
@@ -307,7 +307,7 @@ plots_error_severity <- lapply(split(pes_data, factor(pes_data$time_format, leve
     prev_own_move_eval_posterror,
     pea,
     "Error Severity",
-    "PEA (in evaluation)",
+    labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
     )
 })
@@ -360,7 +360,7 @@ plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, leve
     player_moving_elo_posterror,
     pea,
     "Player Rating (in elo)",
-    "PEA (in evaluation)",
+    labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
     )
 })
