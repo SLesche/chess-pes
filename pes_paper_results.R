@@ -217,7 +217,7 @@ plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, leve
     subdf, 
     player_moving_elo_posterror, 
     pes,
-    "Player Rating (in elo)",
+    "Player Ability (in elo)",
     "PES (in ms)",
     y_limits = c(quantile(subdf$pes, 0.45), quantile(subdf$pes, 0.65))
   )
@@ -359,7 +359,7 @@ plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, leve
     subdf, 
     player_moving_elo_posterror,
     pea,
-    "Player Rating (in elo)",
+    "Player Ability (in elo)",
     labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
     )
