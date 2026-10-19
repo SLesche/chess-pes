@@ -9,3 +9,11 @@ eval_games_21_06.pgn
 /manuscript
 *.pptx
 imgs/chess_sven.jpg
+results/movel_blitz_acc.RDS
+results/movel_blitz_rt.RDS
+results/movel_bullet_acc.RDS
+results/movel_bullet_rt.RDS
+results/movel_classical_acc.RDS
+results/movel_classical_rt.RDS
+results/movel_rapid_acc.RDS
+results/movel_rapid_rt.RDS
