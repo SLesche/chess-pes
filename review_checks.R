@@ -11,6 +11,7 @@ plots_rt_acc <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("
     subdf, 
     move_time_control,
     corrected_move_eval_control,
+    player_var = player_moving_posterror,
     "Move time (in s)",
     labs(x = "Accuracy (eval)")
   )

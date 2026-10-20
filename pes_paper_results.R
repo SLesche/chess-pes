@@ -64,6 +64,7 @@ plots_pes_pea <- lapply(split(pes_data, factor(pes_data$time_format, levels = c(
     subdf, 
     pes,
     pea,
+    player_var = player_moving_posterror,
     "PES (in ms)",
     labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
@@ -99,6 +100,7 @@ plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = 
     subdf,
     opp_move_time_secs_posterror,
     pes,
+    player_var = player_moving_posterror,
     "RSI (in s)",
     "PES (in ms)",
     y_limits = c(quantile(subdf$pes, 0.45), quantile(subdf$pes, 0.65))
@@ -157,6 +159,7 @@ plots_error_severity <- lapply(split(pes_data, factor(pes_data$time_format, leve
     subdf,
     prev_own_move_eval_posterror,
     pes,
+    player_var = player_moving_posterror,
     "Error Severity",
     "PES (in ms)",
     y_limits = c(quantile(subdf$pes, 0.45), quantile(subdf$pes, 0.65))
@@ -217,6 +220,7 @@ plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, leve
     subdf, 
     player_moving_elo_posterror, 
     pes,
+    player_var = player_moving_posterror,
     "Player Ability (in elo)",
     "PES (in ms)",
     y_limits = c(quantile(subdf$pes, 0.45), quantile(subdf$pes, 0.65))
@@ -248,6 +252,7 @@ plots_move_time <- lapply(split(pes_data, factor(pes_data$time_format, levels = 
     subdf, 
     opp_move_time_secs_posterror, 
     pea,
+    player_var = player_moving_posterror,
     "RSI (in s)",
     labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
@@ -306,6 +311,7 @@ plots_error_severity <- lapply(split(pes_data, factor(pes_data$time_format, leve
     subdf, 
     prev_own_move_eval_posterror,
     pea,
+    player_var = player_moving_posterror,
     "Error Severity",
     labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
@@ -359,6 +365,7 @@ plots_player_ability <- lapply(split(pes_data, factor(pes_data$time_format, leve
     subdf, 
     player_moving_elo_posterror,
     pea,
+    player_var = player_moving_posterror,
     "Player Ability (in elo)",
     labs(x = "PEA (Δ eval)"),
     y_limits = c(-1, 1)
