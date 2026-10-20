@@ -86,3 +86,31 @@ model_classical_acc <- lmer(
 )
 
 saveRDS(model_classical_acc, "results/movel_classical_acc.RDS")
+
+## Extracting fixeff
+model_files <- c(
+  bullet_rt       = "results/movel_bullet_rt.RDS",
+  bullet_acc      = "results/movel_bullet_acc.RDS",
+  blitz_rt        = "results/movel_blitz_rt.RDS",
+  blitz_acc       = "results/movel_blitz_acc.RDS",
+  rapid_rt        = "results/movel_rapid_rt.RDS",
+  rapid_acc       = "results/movel_rapid_acc.RDS",
+  classical_rt    = "results/movel_classical_rt.RDS",
+  classical_acc   = "results/movel_classical_acc.RDS"
+)
+
+model_intercepts <- map_dfr(names(model_files), function(model_name) {
+  model <- readRDS(model_files[[model_name]])
+  intercept <- fixef(model)["(Intercept)"]
+  se <- sqrt(vcov(model)["(Intercept)", "(Intercept)"])
+  
+  tibble(
+    model = model_name,
+    intercept = unname(intercept),
+    SE = unname(se),
+    CI_low = unname(intercept - 1.96 * se),
+    CI_high = unname(intercept + 1.96 * se)
+  )
+})
+
+model_intercepts

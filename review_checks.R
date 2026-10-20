@@ -2,6 +2,8 @@ library(tidyverse)
 
 pes_data <- readRDS(file = "lichess_data/pes_data_full.RDS")
 
+pes_data$move_time_control_secs <- pes_data$move_time_control / 100
+
 ## Check relationship move time and acc (overall, not PES/PEA)
 source("helper_functions.R")
 
@@ -9,7 +11,7 @@ source("helper_functions.R")
 plots_rt_acc <- lapply(split(pes_data, factor(pes_data$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
   plot_moderator_analysis(
     subdf, 
-    move_time_control,
+    move_time_control_secs,
     corrected_move_eval_control,
     player_var = player_moving_posterror,
     "Move time (in s)",
