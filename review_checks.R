@@ -134,6 +134,14 @@ combined_move_time_3 <- cowplot::plot_grid(
   ncol = 2
 )
 
+ggplot2::ggsave(
+  filename = "imgs/move_time_moderator_3.jpg",
+  plot = combined_move_time_3,
+  width = 16,       # adjust width as needed
+  height = 9,       # adjust height as needed
+  dpi = 300         # high-quality resolution for publication
+)
+
 plots_move_time_5 <- lapply(split(pes_data_5, factor(pes_data_5$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
   plot_moderator_analysis(
     subdf,
@@ -151,6 +159,14 @@ combined_move_time_5 <- cowplot::plot_grid(
   labels = c("A", "B", "C", "D"),
   label_size = 30,
   ncol = 2
+)
+
+ggplot2::ggsave(
+  filename = "imgs/move_time_moderator_5.jpg",
+  plot = combined_move_time_5,
+  width = 16,       # adjust width as needed
+  height = 9,       # adjust height as needed
+  dpi = 300         # high-quality resolution for publication
 )
 
 # Player ability
@@ -173,6 +189,14 @@ combined_player_ability_3 <- cowplot::plot_grid(
   ncol = 2
 )
 
+ggplot2::ggsave(
+  filename = "imgs/player_ability_moderator_3.jpg",
+  plot = combined_player_ability_3,
+  width = 16,       # adjust width as needed
+  height = 9,       # adjust height as needed
+  dpi = 300         # high-quality resolution for publication
+)
+
 plots_player_ability_5 <- lapply(split(pes_data_5, factor(pes_data_5$time_format, levels = c("bullet", "blitz", "rapid", "classical"))), function(subdf) {
   plot_moderator_analysis(
     subdf, 
@@ -191,4 +215,13 @@ combined_player_ability_5 <- cowplot::plot_grid(
   label_size = 30,
   ncol = 2
 )
+
+ggplot2::ggsave(
+  filename = "imgs/player_ability_moderator_5.jpg",
+  plot = combined_player_ability_5,
+  width = 16,       # adjust width as needed
+  height = 9,       # adjust height as needed
+  dpi = 300         # high-quality resolution for publication
+)
+
 
